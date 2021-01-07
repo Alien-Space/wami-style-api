@@ -1,1 +1,1 @@
-# hack-space-server API
+# NodeJS Rest and GraphQl API init
