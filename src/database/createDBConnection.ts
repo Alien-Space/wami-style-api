@@ -6,7 +6,7 @@ export const connectionSetup: ConnectionOptions = {
   type: 'sqlite',
   database: path.resolve(__dirname, './db.sqlite'),
   synchronize: true,
-  entities: [path.resolve(__dirname, './entities/*')],
+  entities: [path.resolve(__dirname, '../entities/*')],
 };
 
 async function createDBConnection() {
