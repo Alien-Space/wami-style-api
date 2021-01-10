@@ -4,7 +4,7 @@ import { Field, ObjectType } from 'type-graphql';
 
 @Entity('users')
 @ObjectType()
-export default class UserEntity extends BaseEntity {
+export default class User extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn('uuid')
   id!: string;
@@ -19,15 +19,15 @@ export default class UserEntity extends BaseEntity {
 }
 
 export async function createAndGetFirstUser() {
-  await UserEntity.clear();
+  await User.clear();
 
-  const newUser = UserEntity.create({
+  const newUser = User.create({
     email: 'jmamadeu2000@gmail.com',
     name: 'João Amadeu',
   });
-  await UserEntity.save(newUser);
+  await User.save(newUser);
 
-  const users = await UserEntity.find();
+  const users = await User.find();
 
   return users;
 }
