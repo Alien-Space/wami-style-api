@@ -7,6 +7,7 @@ import {
   Query,
   Resolver,
 } from 'type-graphql';
+
 import Product, { AddCategoryInput } from '../entities/Product';
 
 @InputType()
@@ -20,6 +21,9 @@ export class AddProductInput {
   @Field({ nullable: false })
   price: number;
 
+  @Field()
+  quantity: number;
+
   @Field(() => [AddCategoryInput], { description: 'Separe the elements by ;' })
   categories: AddCategoryInput[];
 }
@@ -30,20 +34,37 @@ class AddProductArgs {
   productsInput: AddProductInput[];
 }
 
+export function parseProductCategories(products: Product[]) {
+  return products.map((prod) => ({
+    ...prod,
+    categories: prod.category.split(',').map((cat) => ({ name: cat })),
+  }));
+}
+
 @Resolver(Product)
 export class ProductResolver {
   @Query(() => [Product])
   async allProducts(): Promise<Product[]> {
-    return await Product.find();
+    const productsParsed = parseProductCategories(await Product.find());
+
+    return productsParsed as Product[];
   }
 
   @Mutation(() => [Product])
   async addProduct(
-    @Args(() => AddProductArgs) productArgs: AddProductInput[]
+    @Args(() => AddProductArgs) productArgs: AddProductArgs
   ): Promise<Product[]> {
-    const products = await Product.find();
-    console.log(products);
+    const productsParsed = productArgs.productsInput.map((productValue) => ({
+      ...productValue,
+      category: productValue.categories.map((cat) => `${cat.name}`).toString(),
+    }));
 
-    return products;
+    const products = await Product.insert(productsParsed);
+
+    const newProducts = parseProductCategories(
+      await Product.findByIds(products.identifiers.map((prod) => prod.id))
+    );
+
+    return newProducts as Product[];
   }
 }
