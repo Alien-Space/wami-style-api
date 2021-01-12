@@ -22,7 +22,7 @@ export default class Product extends BaseEntity {
   id!: string;
 
   @Field()
-  @Column('varchar')
+  @Column('varchar', { unique: true })
   name!: string;
 
   @Field()
@@ -35,6 +35,10 @@ export default class Product extends BaseEntity {
 
   @Column('varchar')
   category!: string;
+
+  @Column('int')
+  @Field()
+  quantity: number;
 
   @Field(() => [Category])
   categories!: Category[];
