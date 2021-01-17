@@ -21,7 +21,11 @@ async function main() {
   const schema = await buildSchema({
     resolvers: [UserResolver, ProductResolver],
   });
-  const server = new ApolloServer({ schema });
+  const server = new ApolloServer({
+    schema,
+    introspection: true,
+    playground: true,
+  });
 
   server.applyMiddleware({ app });
 
