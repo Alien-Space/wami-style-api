@@ -14,6 +14,8 @@ const port = process.env.PORT || 4000;
 async function main() {
   const app = express();
 
+  app.use(cors());
+
   await createDBConnection();
 
   const users = await createAndGetFirstUser();
@@ -32,8 +34,6 @@ async function main() {
   app.get('/', async (_, response) => {
     return response.json({ data: users, message: 'Server is ON' });
   });
-
-  app.use(cors());
 
   app.listen({ port }, () =>
     console.log(
