@@ -1614,6 +1614,18 @@ babel-plugin-dynamic-import-node@^2.3.3:
   dependencies:
     object.assign "^4.1.0"
 
+babel-plugin-parameter-decorator@^1.0.16:
+  version "1.0.16"
+  resolved "https://registry.yarnpkg.com/babel-plugin-parameter-decorator/-/babel-plugin-parameter-decorator-1.0.16.tgz#1c889c3a1f3bbf03801fcbc2e95b8bae7468df3f"
+  integrity sha512-yUT2WPTUg1JaPmRGRSF557m1HJ9vdFQInRWOkiOyO5a9HhqlXffJu+fQ2xd5+qU/35ICMrrk9eWKsHCairKA9w==
+
+babel-plugin-transform-typescript-metadata@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-typescript-metadata/-/babel-plugin-transform-typescript-metadata-0.3.1.tgz#d86599b7139131ba5e917f5f568d0c824a5cdfc3"
+  integrity sha512-thOuACZReULfLy7vh2o3/joYkkRerMKLBDmXy3ImCnkNUnxBmNw0uVa05JhhX0slluaEkio6OIFa7zPgaJdk6g==
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.0.0"
+
 backo2@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/backo2/-/backo2-1.0.2.tgz#31ab1ac8b129363463e35b3ebb69f4dfcfba7947"
