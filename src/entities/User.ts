@@ -5,15 +5,15 @@ import { Field, ObjectType } from 'type-graphql';
 @Entity('users')
 @ObjectType()
 export default class User extends BaseEntity {
-  @Field()
+  @Field(() => String)
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Field()
+  @Field(() => String)
   @Column('varchar')
   name!: string;
 
-  @Field()
+  @Field(() => String)
   @Column('varchar')
   email!: string;
 }

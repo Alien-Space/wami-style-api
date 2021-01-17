@@ -4,32 +4,32 @@ import { Field, InputType, ObjectType } from 'type-graphql';
 
 @InputType()
 export class AddCategoryInput {
-  @Field({ nullable: false })
+  @Field(() => String, { nullable: false })
   name: string;
 }
 
 @ObjectType()
 export class Category {
-  @Field()
+  @Field(() => String)
   name: string;
 }
 
 @Entity('products')
 @ObjectType()
 export default class Product extends BaseEntity {
-  @Field()
+  @Field(() => String)
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Field()
+  @Field(() => String)
   @Column('varchar', { unique: true })
   name!: string;
 
-  @Field()
+  @Field(() => String)
   @Column('varchar')
   description!: string;
 
-  @Field()
+  @Field(() => Number)
   @Column('int')
   price!: number;
 
@@ -37,7 +37,7 @@ export default class Product extends BaseEntity {
   category!: string;
 
   @Column('int')
-  @Field()
+  @Field(() => Number)
   quantity: number;
 
   @Field(() => [Category])
