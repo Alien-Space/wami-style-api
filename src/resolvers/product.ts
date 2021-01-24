@@ -26,6 +26,12 @@ export class AddProductInput {
 
   @Field(() => [AddCategoryInput], { description: 'Separe the elements by ;' })
   categories: AddCategoryInput[];
+
+  @Field(() => String)
+  mainDetail: string;
+
+  @Field(() => String)
+  specifications: string;
 }
 
 @ArgsType()

@@ -40,6 +40,14 @@ export default class Product extends BaseEntity {
   @Field(() => Number)
   quantity: number;
 
-  @Field(() => [Category])
+  @Field(() => [Category], {})
   categories!: Category[];
+
+  @Field(() => String)
+  @Column('varchar')
+  mainDetail: string;
+
+  @Field(() => String)
+  @Column('varchar')
+  specifications: string;
 }
