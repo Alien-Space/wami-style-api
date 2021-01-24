@@ -60,17 +60,25 @@ export class ProductResolver {
   async addProduct(
     @Args(() => AddProductArgs) productArgs: AddProductArgs
   ): Promise<Product[]> {
-    const productsParsed = productArgs.productsInput.map((productValue) => ({
-      ...productValue,
-      category: productValue.categories.map((cat) => `${cat.name}`).toString(),
-    }));
+    function parseProductCategories(products: AddProductInput[]) {
+      return products.map((productValue) => ({
+        ...productValue,
+        category: productValue.categories
+          .map((cat) => `${cat.name}`)
+          .toString(),
+      }));
+    }
 
-    const products = await Product.insert(productsParsed);
+    const productsWithCategoriesParsed = parseProductCategories(
+      productArgs.productsInput
+    );
 
-    const newProducts = parseProductCategories(
+    const products = await Product.insert(productsWithCategoriesParsed);
+
+    const allAddedProducts = parseProductCategories(
       await Product.findByIds(products.identifiers.map((prod) => prod.id))
     );
 
-    return newProducts as Product[];
+    return allAddedProducts as Product[];
   }
 }
