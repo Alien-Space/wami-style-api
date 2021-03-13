@@ -1,18 +1,13 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-import { Field, InputType, ObjectType } from 'type-graphql';
-
-@InputType()
-export class AddCategoryInput {
-  @Field(() => String, { nullable: false })
-  name: string;
-}
-
-@ObjectType()
-export class Category {
-  @Field(() => String)
-  name: string;
-}
+import { Field, ObjectType } from 'type-graphql';
+import Category from './Category';
 
 @Entity('products')
 @ObjectType()
@@ -33,13 +28,11 @@ export default class Product extends BaseEntity {
   @Column('int')
   price!: number;
 
-  @Column('varchar')
-  category!: string;
-
   @Column('int')
   @Field(() => Number)
   quantity: number;
 
+  @OneToMany(() => Category, (categories) => categories.product)
   @Field(() => [Category], {})
   categories!: Category[];
 

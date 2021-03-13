@@ -4,11 +4,12 @@ import {
   Field,
   InputType,
   Mutation,
+  ObjectType,
   Query,
   Resolver,
 } from 'type-graphql';
 
-import Product, { AddCategoryInput } from '../entities/Product';
+import { Product, AddCategoryInput, Category } from '../entities';
 
 @InputType()
 export class AddProductInput {
@@ -24,7 +25,7 @@ export class AddProductInput {
   @Field()
   quantity: number;
 
-  @Field(() => [AddCategoryInput], { description: 'Separe the elements by ;' })
+  @Field(() => [AddCategoryInput])
   categories: AddCategoryInput[];
 
   @Field(() => String)
@@ -40,45 +41,72 @@ class AddProductArgs {
   productsInput: AddProductInput[];
 }
 
-export function parseProductCategories(products: Product[]) {
-  return products.map((prod) => ({
-    ...prod,
-    categories: prod.category.split(',').map((cat) => ({ name: cat })),
-  }));
+@ObjectType()
+export class FieldError {
+  @Field()
+  path: string;
+
+  @Field()
+  message: string;
+}
+
+@ObjectType()
+export class ProductResponse {
+  @Field(() => [Product], { nullable: true })
+  products?: Product[];
+
+  @Field(() => [FieldError], { nullable: true })
+  errors?: FieldError[];
 }
 
 @Resolver(Product)
 export class ProductResolver {
-  @Query(() => [Product])
-  async allProducts(): Promise<Product[]> {
-    const productsParsed = parseProductCategories(await Product.find());
+  @Query(() => ProductResponse)
+  async allProducts(): Promise<ProductResponse> {
+    try {
+      const productsParsed = await Product.find({ relations: ['categories'] });
 
-    return productsParsed as Product[];
+      return { products: productsParsed, errors: null };
+    } catch (err) {
+      return { errors: [{ path: '', message: err.message }] };
+    }
   }
 
-  @Mutation(() => [Product])
+  @Mutation(() => ProductResponse)
   async addProduct(
     @Args(() => AddProductArgs) productArgs: AddProductArgs
-  ): Promise<Product[]> {
-    function parseProductCategories(products: AddProductInput[]) {
-      return products.map((productValue) => ({
-        ...productValue,
-        category: productValue.categories
-          .map((cat) => `${cat.name}`)
-          .toString(),
-      }));
+  ): Promise<ProductResponse> {
+    try {
+      const productsAdded = await Promise.all(
+        productArgs.productsInput.map(async (product) => {
+          const productToAdd = Product.create(product);
+
+          await Product.save(productToAdd);
+
+          const categoriesAdded = await Promise.all(
+            productToAdd.categories.map(async (cat) => {
+              const categoryAdded = Category.create({
+                ...cat,
+                product: productToAdd,
+              });
+
+              await Category.save(categoryAdded);
+
+              return categoryAdded;
+            })
+          );
+
+          productToAdd.categories = categoriesAdded;
+
+          return productToAdd;
+        })
+      );
+
+      return { products: productsAdded };
+    } catch (err) {
+      console.log(err.message, 'message');
+
+      return { errors: [{ message: err.message, path: '' }] };
     }
-
-    const productsWithCategoriesParsed = parseProductCategories(
-      productArgs.productsInput
-    );
-
-    const products = await Product.insert(productsWithCategoriesParsed);
-
-    const allAddedProducts = parseProductCategories(
-      await Product.findByIds(products.identifiers.map((prod) => prod.id))
-    );
-
-    return allAddedProducts as Product[];
   }
 }
