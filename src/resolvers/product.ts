@@ -64,7 +64,9 @@ export class ProductResolver {
   @Query(() => ProductResponse)
   async allProducts(): Promise<ProductResponse> {
     try {
-      const productsParsed = await Product.find({ relations: ['categories'] });
+      const productsParsed = await Product.find({
+        relations: ['categories', 'images'],
+      });
 
       return { products: productsParsed, errors: null };
     } catch (err) {
