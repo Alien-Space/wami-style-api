@@ -12,6 +12,7 @@ import multer from 'multer';
 
 import path from 'path';
 import { storage } from './configs/upload';
+import UploadController from './controllers/uploadController';
 
 const port = process.env.PORT || 4000;
 
@@ -24,15 +25,12 @@ async function main() {
 
   app.use(cors());
   app.use(express.json());
-  app.post('/avatar', upload.single('avatar'), function (req, res, next) {
-    // req.file is the `avatar` file
 
-    console.log(req.file, 'FILE');
-
-    res.json(req.file);
-
-    // req.body will hold the text fields, if there were any
-  });
+  app.post(
+    '/files/:productId',
+    upload.single('image'),
+    UploadController.uploadFile
+  );
 
   app.use('/files', express.static(path.join(__dirname, 'tmp', 'uploads')));
 
