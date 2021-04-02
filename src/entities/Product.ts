@@ -8,6 +8,7 @@ import {
 
 import { Field, ObjectType } from 'type-graphql';
 import Category from './Category';
+import { Image } from '.';
 
 @Entity('products')
 @ObjectType()
@@ -35,6 +36,10 @@ export default class Product extends BaseEntity {
   @OneToMany(() => Category, (categories) => categories.product)
   @Field(() => [Category], {})
   categories!: Category[];
+
+  @OneToMany(() => Image, (images) => images.product, { cascade: true })
+  @Field(() => [Image], {})
+  images!: Image[];
 
   @Field(() => String)
   @Column('varchar')
